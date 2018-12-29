@@ -3,6 +3,8 @@
 
 Webcompare is a tool to periodically detect and alert on changes to website content, both visually as well as source changes.
 
+Example result: [https://imgur.com/klY2AKy](https://imgur.com/klY2AKy)
+
 ## Getting Started
 
 The tool is in early development stages but is simple to use.
