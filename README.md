@@ -5,7 +5,7 @@ Webcompare is a tool to periodically detect and alert on changes to website cont
 
 ## Getting Started
 
-Currently the tool is in early development stages and is simple to use.
+The tool is in early development stages but is simple to use.
 
 ### Prerequisites
 
@@ -24,7 +24,7 @@ Below are the main python libraries and imports currently used for the project. 
 
 ### Installing
 
-The script is mostly written to be extremely simple to setup. Running for the first time, or without a config file present will prompt you to set up one or more hosts to scan, and the time interval between each scan.
+The script is super simple to setup. Running for the first time, or without a config file present will prompt you to set up one or more hosts to scan, and the time interval between each scan.
 
 An interactive prompt can be used to add hosts after-initial setup by using either of the below flags
 ```
@@ -69,7 +69,7 @@ To set up email alerts, create a file called emailAlert.py in the cloned directo
 
         def send_email_alert(self, host_name, soup_diff, visscan_timestamp, detected_change, result_scrn_location):
 
-            before_scrn_location = "./scan_data/mytestpage/scrncompare/"+visscan_timestamp+"/PREV_SCRN_"+visscan_timestamp+".png"
+            before_scrn_location = "./scan_data/" + host_name + "/scrncompare/"+visscan_timestamp+"/PREV_SCRN_"+visscan_timestamp+".png"
 
             img_data_before = open(before_scrn_location, 'rb').read()
             image_before = MIMEImage(img_data_before, name=os.path.basename(before_scrn_location))
