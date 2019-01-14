@@ -45,7 +45,7 @@ class ScrapeTheWorld:
     result_scrn_location = None
     detected_change = None
     soup_changes_detected = []
-
+    alert_sens = 20  # Define the visual percent change before sending email alert
 
     def __init__(self):
 
@@ -318,14 +318,17 @@ class ScrapeTheWorld:
         ScreenAnalysis(self, host_name, url, self.main_dir_name)  # start screen analysis
 
         if self.detected_change is not None:
-            EmailAlert.send_email_alert(self, host_name, self.soup_changes_detected, self.visscan_timestamp,
-                                        self.detected_change, self.result_scrn_location)
-            # Reset all for next scan
-            self.soup_changes_detected = None
-            self.visscan_timestamp = None
-            self.detected_change = None
-            self.before_scrn_location = None
-            self.result_scrn_location = None
+            if self.detected_change > self.alert_sens:
+                EmailAlert.send_email_alert(self, host_name, self.soup_changes_detected, self.visscan_timestamp,
+                                            self.detected_change, self.result_scrn_location)
+                # Reset all for next scan
+                self.soup_changes_detected = None
+                self.visscan_timestamp = None
+                self.detected_change = None
+                self.before_scrn_location = None
+                self.result_scrn_location = None
+            else:
+                print("detected change is less than 20: "+str(self.detected_change))
 
     def set_percent_change(self, perc_change, prev_scrn, result_scrn, timestamp):
 
