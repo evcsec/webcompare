@@ -243,7 +243,9 @@ class ScrapeTheWorld:
                 )
                 for line in diff:
                     sys.stdout.write(line)
-                    self.soup_changes_detected.append(line)
+                    changes = self.soup_changes_detected
+                    if changes is not None:
+                        changes.append(line)
                     pass
 
     def do_md5_check(self, host_name, url):
