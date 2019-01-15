@@ -18,8 +18,6 @@ Below are the main python libraries and imports currently used for the project. 
 - requests
 - selenium
 - Django
-- difflib
-- arrow
 - configparser
 - chromedriver
 ```
