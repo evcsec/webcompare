@@ -14,10 +14,9 @@ The tool is in early development stages but is simple to use.
 Below are the main python libraries and imports currently used for the project. See webcompare.py for full list.
 
 ```
+- Selenium
 - BeautifulSoup4
 - requests
-- selenium
-- Django
 - configparser
 - chromedriver
 ```
