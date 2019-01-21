@@ -4,6 +4,7 @@ from PIL import Image, ImageDraw
 from selenium import webdriver
 import selenium as se
 from shutil import copyfile
+from lib.logger import *
 
 
 class ScreenAnalysis(object):
@@ -123,6 +124,7 @@ class ScreenAnalysis(object):
                     draw = ImageDraw.Draw(screenshot_current)
                     draw.rectangle((x, y, x + block_width, y + block_height), outline="red")
                     arr.append([x, y])
+                    print("Points: " + str(x) + str(y))
 
         selenium_last_dir = './' + self.MAIN_DIR_NAME + '/' + host_name + '/scrncompare/selenium_last'
 
@@ -131,11 +133,9 @@ class ScreenAnalysis(object):
                 pickle.dump(arr, f)
 
                 log_file = './' + self.MAIN_DIR_NAME + '/' + host_name + '/scrncompare/log.txt'
-                log = open(log_file, "a")
-                log.write(
-                    host_name + ' | ' + self.current_scan_timestamp + ' | ' + 'selenium file does not exist, creating...' + ' | ' + 'Wrote to file with length:' + str(
-                        len(arr)) + '\n')
-                log.close()
+                message1 = 'selenium file does not exist, creating...'
+                message2 ='Wrote to file with length: ' + str(len(arr))
+                Logger(log_file, host_name, self.current_scan_timestamp, message1, message2)
         else:
             with open(selenium_last_dir, 'rb') as f:
                 selenium_prev_arr = pickle.load(f)
@@ -168,10 +168,9 @@ class ScreenAnalysis(object):
 
                 # Append results to master log (per host)
                 log_file = './' + self.MAIN_DIR_NAME + '/' + host_name + '/scrncompare/log.txt'
-                log = open(log_file, "a")
-                log.write(host_name + ' | ' + str(self.current_scan_timestamp) + ' | ' + 'Points Changed: ' + str(
-                    changed_points_vs_prev) + ' | ' + 'Change %: ' + str(self.detected_change) + '\n')
-                log.close()
+                message1 = 'Points Changed: ' + str(changed_points_vs_prev)
+                message2 = 'Change %: ' + str(self.detected_change)
+                Logger(log_file, host_name, self.current_scan_timestamp, message1, message2)
 
         #  New result save in current dir
         self.result_dir = self.current_scan_directory + '/result_' + time.strftime(

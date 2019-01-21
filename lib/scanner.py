@@ -10,6 +10,8 @@ from shutil import copyfile
 
 def start_scan(host_name, url):  # Initiate a scan on the given URL
 
+    print("********************************************************************")
+
     MAIN_DIR_NAME = 'scan_data'
 
     soup_changes_detected = do_md5_check(host_name, url)  # Compare hashes, returns soup_diff
@@ -23,7 +25,7 @@ def start_scan(host_name, url):  # Initiate a scan on the given URL
 
     # result_srn_loc & visscan
 
-    if detected_change is not None:
+    if detected_change is not None and detected_change != 0:
         send_email_alert(host_name, soup_changes_detected, visscan_timestamp,
                                     detected_change, result_scrn_location)
 
@@ -43,8 +45,8 @@ def do_md5_check(host_name, url):
         os.mkdir(hash_compare_dir)
 
     file_dir = hash_compare_dir + '/web_contents_'+time.strftime("%Y-%m-%d_%H-%M")+'.txt'
-    fmain = open(file_dir, 'w')
-    fmain.write(get_web_contents(url))
+    fmain = open(file_dir, 'w', encoding='Latin-1', errors='ignore')  # Encode in Latin-1 to avoid unmapped char errors
+    fmain.write(str(get_web_contents(url)))
     fmain.close()
     # Generate md5
     new_md5 = get_md5(file_dir)
@@ -85,7 +87,7 @@ def get_web_contents(url):
 
     response = requests.get(url, headers=headers)  # download the homepage
 
-    return response.text  # content
+    return str(response.text)  # content
 
 
 def get_md5(file_path):

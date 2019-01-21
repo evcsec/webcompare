@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw
 from selenium import webdriver
 import selenium as se
 from shutil import copyfile
-
+from lib.logger import *
 driver = None
 
 
@@ -127,15 +127,14 @@ def analyse(host_name, scrn_filepath, MAIN_DIR_NAME, PREV_SCRN, current_scan_dir
             pickle.dump(arr, f)
 
             log_file = './' + MAIN_DIR_NAME + '/' + host_name + '/scrncompare/log.txt'
-            log = open(log_file, "a")
-            log.write(
-                host_name + ' | ' + current_scan_timestamp + ' | ' + 'selenium file does not exist, creating...' + ' | ' + 'Wrote to file with length:' + str(
-                    len(arr)) + '\n')
-            log.close()
+
+            message1 = 'selenium file does not exist, creating...'
+            message2 = 'Wrote to file with length:'
+            Logger(log_file, host_name, current_scan_timestamp, message1, message2)
     else:
         with open(selenium_last_dir, 'rb') as f:
             selenium_prev_arr = pickle.load(f)
-            detected_change = None
+            detected_change = 0
             totalcount = len(selenium_prev_arr)
             pod = [filter(lambda x: x in selenium_prev_arr, sublist) for sublist in
                    arr]  # compare points of difference
@@ -164,10 +163,9 @@ def analyse(host_name, scrn_filepath, MAIN_DIR_NAME, PREV_SCRN, current_scan_dir
 
             # Append results to master log (per host)
             log_file = './' + MAIN_DIR_NAME + '/' + host_name + '/scrncompare/log.txt'
-            log = open(log_file, "a")
-            log.write(host_name + ' | ' + str(current_scan_timestamp) + ' | ' + 'Points Changed: ' + str(
-                changed_points_vs_prev) + ' | ' + 'Change %: ' + str(detected_change) + '\n')
-            log.close()
+            message1 = 'Points Changed: ' + str(changed_points_vs_prev)
+            message2 = 'Change %: ' + str(detected_change)
+            Logger(log_file, host_name, current_scan_timestamp, message1, message2)
 
     #  New result save in current dir
     result_dir = current_scan_directory + '/result_' + time.strftime(
