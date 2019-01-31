@@ -5,6 +5,7 @@ from selenium import webdriver
 import selenium as se
 from shutil import copyfile
 from lib.logger import *
+from lib.vischange_logger import *
 driver = None
 
 
@@ -120,6 +121,7 @@ def analyse(host_name, scrn_filepath, MAIN_DIR_NAME, PREV_SCRN, current_scan_dir
                 draw.rectangle((x, y, x + block_width, y + block_height), outline="red")
                 arr.append([x, y])
 
+    vischange_logger('/change-reg.txt', host_name, arr)
     selenium_last_dir = './' + MAIN_DIR_NAME + '/' + host_name + '/scrncompare/selenium_last'
 
     if not Path(selenium_last_dir).is_file():

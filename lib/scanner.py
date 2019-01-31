@@ -1,5 +1,5 @@
 from lib.screen_analysis_new import start_analysis
-from lib.emailAlert import send_email_alert
+from lib.emailAlert import *
 
 # imports for do_md5_check and it's functions
 import os, time, hashlib, difflib, sys, requests
@@ -26,7 +26,7 @@ def start_scan(host_name, url):  # Initiate a scan on the given URL
     # result_srn_loc & visscan
 
     if detected_change is not None and detected_change != 0:
-        send_email_alert(host_name, soup_changes_detected, visscan_timestamp,
+        EmailAlert(host_name, soup_changes_detected, visscan_timestamp,
                                     detected_change, result_scrn_location)
 
 
@@ -34,6 +34,7 @@ def start_scan(host_name, url):  # Initiate a scan on the given URL
 def do_md5_check(host_name, url):
 
     MAIN_DIR_NAME = 'scan_data'
+    soup_changes_detected = ''
 
     # Get contents, write to txt
     hash_compare_dir = './' + MAIN_DIR_NAME + '/' + host_name + '/hashcompare'
@@ -78,6 +79,7 @@ def do_md5_check(host_name, url):
                 f.write(new_md5)
                 f.close()
         f.close()
+
 
     return soup_changes_detected
 
