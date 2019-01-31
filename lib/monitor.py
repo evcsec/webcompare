@@ -1,6 +1,6 @@
 import time
 from lib.scanner import start_scan
-from lib.date import Date
+import lib.date as Date
 from lib.config import Config
 import re
 
@@ -50,11 +50,11 @@ class Monitor(object):
                 if last_scan == '':
                     print('Doing first time scan')
                     start_scan(each_section, target_url)
-                    Config.update_config_section(each_section, target_url, interval_time, Date.get_current_datetime())
+                    Config.update_config_section(self, each_section, target_url, interval_time, Date.get_current_datetime())
                 else:
                     if int(Date.get_time_diff(last_scan)) >= int(interval_time):
                         start_scan(each_section, target_url)
-                        Config.update_config_section(each_section, target_url, interval_time, Date.get_current_datetime())
+                        Config.update_config_section(self, each_section, target_url, interval_time, Date.get_current_datetime())
 
             print('Waiting ...\n')
 

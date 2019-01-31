@@ -5,7 +5,7 @@ from selenium import webdriver
 import selenium as se
 from shutil import copyfile
 from lib.logger import *
-from lib.vischange_logger import *
+from lib.vischange_logger import VisChangeLogger
 driver = None
 
 
@@ -25,12 +25,11 @@ def start_analysis(host_name, target_url):
     PREV_SCRN = SCRN_COMPARE_DIR + '/prev_scrn.png'  # The last screenshot taken in history
     set_up()
     returned_vars = capture_screen(host_name, before_url, SCRN_COMPARE_DIR, MAIN_DIR_NAME, current_scan_timestamp)
-
+    analyse_return_vars = None
     prev_file_name = returned_vars[0]
     scrn_filepath = returned_vars[1]
     current_scan_directory = returned_vars[2]
-
-    detected_change = None
+    vars_to_return = None
 
     if Path(PREV_SCRN).is_file():
         analyse_return_vars = analyse(host_name, scrn_filepath, MAIN_DIR_NAME, PREV_SCRN, current_scan_directory, current_scan_timestamp)
@@ -41,11 +40,10 @@ def start_analysis(host_name, target_url):
     copyfile(SCRN_COMPARE_DIR + '/' + current_scan_timestamp + '/' + prev_file_name,
              PREV_SCRN)  # copy current to prev_scrn for next cmp
 
-    check_for_alert(detected_change)
-
     clean_up()
 
-    vars_to_return = [analyse_return_vars[1], analyse_return_vars[0], analyse_return_vars[2]]
+    if analyse_return_vars is not None:
+        vars_to_return = [analyse_return_vars[1], analyse_return_vars[0], analyse_return_vars[2]]
 
     return vars_to_return
 
@@ -64,6 +62,7 @@ def capture_screen(host_name, before_url, SCRN_COMPARE_DIR, MAIN_DIR_NAME, curre
     if not os.path.exists(SCRN_COMPARE_DIR):
         os.mkdir(SCRN_COMPARE_DIR)
 
+    # need to add check if already exists
     current_scan_directory = './' + MAIN_DIR_NAME + '/' + host_name + '/scrncompare/' + current_scan_timestamp
     os.mkdir(current_scan_directory)
 
@@ -90,18 +89,11 @@ def screenshot(url, file_name, SCRN_COMPARE_DIR, current_scan_timestamp):
     return scrn_filepath
 
 
-def check_for_alert(detected_change):
-    # Check if over a threshold
-    print('\nChecking for alert')
-    print('Found:' + str(detected_change) + '% difference')
-    print('***\n\n')
-
-
 def analyse(host_name, scrn_filepath, MAIN_DIR_NAME, PREV_SCRN, current_scan_directory, current_scan_timestamp):
 
     screenshot_current = Image.open(scrn_filepath)  # staging
     screenshot_prev = Image.open(PREV_SCRN)  # production
-
+    detected_change = None
     columns = 60
     rows = 80
     screen_width, screen_height = screenshot_current.size
@@ -121,7 +113,7 @@ def analyse(host_name, scrn_filepath, MAIN_DIR_NAME, PREV_SCRN, current_scan_dir
                 draw.rectangle((x, y, x + block_width, y + block_height), outline="red")
                 arr.append([x, y])
 
-    vischange_logger('/change-reg.txt', host_name, arr)
+    VisChangeLogger('./change-reg.txt', host_name, arr)
     selenium_last_dir = './' + MAIN_DIR_NAME + '/' + host_name + '/scrncompare/selenium_last'
 
     if not Path(selenium_last_dir).is_file():
